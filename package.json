@@ -1,0 +1,14 @@
+{
+  "name": "messing-around-server",
+  "version": "1.0.0",
+  "main": "messing-around-server.js",
+  "engines": {
+    "node": "4.1.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "messing-around-server.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
