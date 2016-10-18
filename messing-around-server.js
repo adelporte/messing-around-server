@@ -4,6 +4,7 @@ var http = require("http");
 var server = http.createServer(function(request, response) {
   console.log(request.url);
   if (request.url === '/script.js') {
+    console.log('in the script')
     response.writeHead(200, {"Content-Type": "text/javascript"});
     response.write(`
     var ele = document.getElementById("button");
@@ -27,7 +28,7 @@ var server = http.createServer(function(request, response) {
         }
       };
     `);
-  };
+  } else {
   response.writeHead(200, {"Content-Type": "text/html"});
   response.write(`<!DOCTYPE 'html'>
     <html>
@@ -42,6 +43,8 @@ var server = http.createServer(function(request, response) {
         <script type="text/javascript" src="script.js"></script>
       </body>
     </html>`);
+  }
+  response.end();
 });
 
 
