@@ -2,31 +2,42 @@ var http = require("http");
 
 
 var server = http.createServer(function(request, response) {
-  console.log(request.url);
   if (request.url === '/script.js') {
-    console.log('in the script')
-    response.writeHead(200, {"Content-Type": "text/javascript"});
+    response.writeHead(200, {"Content-Type": "application/javascript"});
     response.write(`
     var ele = document.getElementById("button");
-      ele.addEventListener("click", printIt, false);
-      function printIt() {
+      ele.addEventListener("click", generateFizzBuzz, false);
+      var values = [];
+      //--The FizzBuzz logic
+      function generateFizzBuzz() {
+        for (var i = 1; i <= 100; i++) {
+          if (i % 3 === 0 && i % 5 === 0) {
+            values.push("FizzBuzz");
+          } else if (i % 3 === 0) {
+            values.push("Fizz"); 
+          } else if (i % 5 === 0) {
+            values.push("Buzz");  
+          } else {
+            values.push(i);
+          }
+        }
+        renderFizzBuzz(values);
+      }
+      //--
+
+      //--Render the logic
+      function renderFizzBuzz(values) {
         var node;
         var textnode;
-        for (var i = 1; i <= 100; i++) {
+        values.forEach(function(ele) {
           node = document.createElement("LI");
-        if (i % 3 === 0 && i % 5 === 0) {
-          textnode = document.createTextNode("FizzBuzz");  
-        } else if (i % 3 === 0) {
-          textnode = document.createTextNode("Fizz");  
-        } else if (i % 5 === 0) {
-          textnode = document.createTextNode("Buzz");  
-        } else {
-          textnode = document.createTextNode(i);  
-        }
-        node.appendChild(textnode);
-        document.getElementById("fuzz").appendChild(node); 
-        }
-      };
+          textnode = document.createTextNode(ele);
+          node.appendChild(textnode);
+          document.getElementById("fuzz").appendChild(node); 
+        })
+      }
+      //--
+
     `);
   } else {
   response.writeHead(200, {"Content-Type": "text/html"});
