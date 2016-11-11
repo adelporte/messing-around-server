@@ -5,11 +5,19 @@ var server = http.createServer(function(request, response) {
   if (request.url === '/script.js') {
     response.writeHead(200, {"Content-Type": "application/javascript"});
     response.write(`
-    var ele = document.getElementById("button");
-      ele.addEventListener("click", generateFizzBuzz, false);
-      var values = [];
+      var ele = document.getElementById("button");
+      ele.addEventListener("click", clickEventHandler, false);
+
+      //--The doer function
+      function clickEventHandler() {
+        var values = generateFizzBuzz();
+        renderFizzBuzz(values);
+      }
+      //--
+
       //--The FizzBuzz logic
       function generateFizzBuzz() {
+        var values = [];
         for (var i = 1; i <= 100; i++) {
           if (i % 3 === 0 && i % 5 === 0) {
             values.push("FizzBuzz");
@@ -21,7 +29,7 @@ var server = http.createServer(function(request, response) {
             values.push(i);
           }
         }
-        renderFizzBuzz(values);
+        return values;
       }
       //--
 
