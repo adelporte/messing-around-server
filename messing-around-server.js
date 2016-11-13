@@ -1,21 +1,9 @@
 var http = require("http");
-
+var fs = require('fs');
 
 var server = http.createServer(function(request, response) {
-  if (request.url === '/script.js') {
-    response.writeHead(200, {"Content-Type": "application/javascript"});
-    response.write(`
-      var ele = document.getElementById("button");
-      ele.addEventListener("click", clickEventHandler, false);
 
-      //--The doer function
-      function clickEventHandler() {
-        var values = generateFizzBuzz();
-        renderFizzBuzz(values);
-      }
-      //--
-
-      //--The FizzBuzz logic
+  //--The FizzBuzz logic
       function generateFizzBuzz() {
         var values = [];
         for (var i = 1; i <= 100; i++) {
@@ -31,7 +19,33 @@ var server = http.createServer(function(request, response) {
         }
         return values;
       }
+
+      var values = generateFizzBuzz();
+      
+
       //--
+if (request.url === '/json.json') {
+  response.writeHead(200, {"Content-Type": "application/json"});
+  var values = JSON.stringify({ 
+    values : values
+  });
+  response.end(json);
+} else if (request.url === '/script.js') {
+    response.writeHead(200, {"Content-Type": "application/javascript"});
+    response.write(`
+      var ele = document.getElementById("button");
+      ele.addEventListener("click", clickEventHandler, false);
+
+      
+      
+
+      //--The doer function
+      function clickEventHandler() {
+        renderFizzBuzz(values);
+      }
+      //--
+
+      
 
       //--Render the logic
       function renderFizzBuzz(values) {
