@@ -21,31 +21,27 @@ var server = http.createServer(function(request, response) {
       }
 
       var values = generateFizzBuzz();
-      
-
+      var valuesJSON = JSON.stringify(values);
       //--
+/*
 if (request.url === '/json.json') {
   response.writeHead(200, {"Content-Type": "application/json"});
   var values = JSON.stringify({ 
-    values : values
+    valuesdata : values
   });
   response.end(json);
-} else if (request.url === '/script.js') {
+} else*/ if (request.url === '/script.js') {
     response.writeHead(200, {"Content-Type": "application/javascript"});
+    response.write("values = " + valuesJSON);
     response.write(`
       var ele = document.getElementById("button");
       ele.addEventListener("click", clickEventHandler, false);
-
       
-      
-
       //--The doer function
       function clickEventHandler() {
         renderFizzBuzz(values);
       }
       //--
-
-      
 
       //--Render the logic
       function renderFizzBuzz(values) {
@@ -59,8 +55,8 @@ if (request.url === '/json.json') {
         })
       }
       //--
+  `);
 
-    `);
   } else {
   response.writeHead(200, {"Content-Type": "text/html"});
   response.write(`<!DOCTYPE 'html'>
