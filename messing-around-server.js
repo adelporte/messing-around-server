@@ -24,7 +24,12 @@ var server = http.createServer(function(request, response) {
       //var valuesJSON = JSON.stringify(values);
       */
 
-if (request.url === '/json.json') {
+if (request.url === '/json2.json') {
+
+
+}
+
+else if (request.url === '/json.json') {
 
   //--The FizzBuzz logic
   function generateFizzBuzz() {
@@ -58,9 +63,9 @@ if (request.url === '/json.json') {
     response.writeHead(200, {"Content-Type": "application/javascript"});
     //response.write("values = " + valuesJSON);
     response.write(`
-      var ele = document.getElementById("button");
+      var ele = document.getElementById("button");     
       ele.addEventListener("click", clickEventHandler, false);
-      
+
       var values;
 
       //AJAX call
@@ -79,9 +84,36 @@ if (request.url === '/json.json') {
 
       //--The doer function
       function clickEventHandler() {
+        getTheInput();
         renderFizzBuzz(values);
       }
       //--
+
+      function getTheInput() {
+        var userInput = $('input').val();
+
+        /*$.ajax({
+          type: 'POST',
+          data: userInput,
+          url: '/json.json'
+        });*/
+
+        $.ajax({
+                type: 'POST',
+                data: JSON.stringify(userInput),
+                contentType: "application/json",
+                dataType:'json',
+                url: '/json2.json',                      
+                success: function(data) {
+                    console.log('success');
+                    console.log(JSON.stringify(data));                               
+                },
+                error: function(error) {
+                    console.log("some error in fetching the notifications");
+                }
+
+            });
+      }
 
       //--Render the logic
       function renderFizzBuzz(values) {
@@ -97,7 +129,7 @@ if (request.url === '/json.json') {
       //--
   `);
 
-  } else {
+  } else if (request.url === '/') {
   response.writeHead(200, {"Content-Type": "text/html"});
   response.write(`<!DOCTYPE 'html'>
     <html>
@@ -109,7 +141,23 @@ if (request.url === '/json.json') {
         <ul id='fuzz'>
         </ul>
 
+        <form>
+          <input type="number" name="fizzBuzzLimit" placeholder="Please, specify a limit">
+        </form>
+
         <button id='button'>CLICK</button>
+        <script type="text/javascript" src="script.js"></script>
+      </body>
+    </html>`);
+  } else {
+    response.writeHead(404, {"Content-Type": "text/html"});
+    response.write(`<!DOCTYPE 'html'>
+    <html>
+      <head>
+        <title>Hello World Page</title>
+      </head>
+      <body>
+        <h1>Sorry, this page doesn't exist!</h1>
         <script type="text/javascript" src="script.js"></script>
       </body>
     </html>`);
