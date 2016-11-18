@@ -105,8 +105,7 @@ else if (request.url === '/json.json') {
                 dataType:'json',
                 url: '/json2.json',                      
                 success: function(data) {
-                    console.log('success');
-                    console.log(JSON.stringify(data));                               
+                    console.log('success');                              
                 },
                 error: function(error) {
                     console.log("some error in fetching the notifications");
