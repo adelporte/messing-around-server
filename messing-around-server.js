@@ -1,5 +1,4 @@
 var http = require("http");
-var fs = require('fs');
 
 var server = http.createServer(function(request, response) {
   
@@ -24,17 +23,31 @@ var server = http.createServer(function(request, response) {
       //var valuesJSON = JSON.stringify(values);
       */
 
-if (request.url === '/json2.json') {
+if (request.url === '/json.json') {
 
+  //--Get the limitvalue via AJAX
+  function getBody(request, callback) {
+      var result;
+      if (request.method == 'POST') {
+          var jsonString = '';
 
-}
+          request.on('data', function (data) {
+              jsonString += data;
+          });
 
-else if (request.url === '/json.json') {
+          request.on('end', function () {
+              result = JSON.parse(jsonString);
+              callback(result);
+          });
+      }
+  }
+  //--
 
   //--The FizzBuzz logic
-  function generateFizzBuzz() {
+  function generateFizzBuzz(limitValue) {
     var values = [];
-    for (var i = 1; i <= 100; i++) {
+
+    for (var i = 1; i <= limitValue; i++) {
       if (i % 3 === 0 && i % 5 === 0) {
         values.push("FizzBuzz");
       } else if (i % 3 === 0) {
@@ -47,17 +60,24 @@ else if (request.url === '/json.json') {
     }
     return values;
   }
-  
-  var values = generateFizzBuzz();
-
   //--
 
-  response.writeHead(200, {"Content-Type": "application/json"});
-  var values = JSON.stringify({ 
-    values
-  });
+  getBody(request, function(res) {
+     
+     var limitValue = res;
+     var values = generateFizzBuzz(limitValue);
+     console.log(values, 'in getbody')
 
-  response.end(values);
+     response.writeHead(200, {"Content-Type": "application/json"});
+
+     values = JSON.stringify({ 
+        values
+      });
+      console.log(values, 'when stringified')
+
+      response.end(values);
+      
+  });  
   
 } else if (request.url === '/script.js') {
     response.writeHead(200, {"Content-Type": "application/javascript"});
@@ -66,56 +86,52 @@ else if (request.url === '/json.json') {
       var ele = document.getElementById("button");     
       ele.addEventListener("click", clickEventHandler, false);
 
-      var values;
-
-      //AJAX call
-      $.ajax({
-        url:'/json.json',
-        //If success
-        success : function (result) {
-          values = result.values;
-        },
-        //If error
-        error : function (error) {
-          console.log(error);
-        }
-      });
-
-
       //--The doer function
       function clickEventHandler() {
         getTheInput();
-        renderFizzBuzz(values);
       }
       //--
 
       function getTheInput() {
         var userInput = $('input').val();
 
-        /*$.ajax({
-          type: 'POST',
-          data: userInput,
-          url: '/json.json'
-        });*/
-
         $.ajax({
                 type: 'POST',
                 data: JSON.stringify(userInput),
-                contentType: "application/json",
-                dataType:'json',
-                url: '/json2.json',                      
-                success: function(data) {
-                    console.log('success');                              
-                },
+                url: '/json.json',                      
+                success: renderFizzBuzz(),
                 error: function(error) {
                     console.log("some error in fetching the notifications");
+                    console.log(error);
                 }
 
             });
       }
 
-      //--Render the logic
-      function renderFizzBuzz(values) {
+      //--Make the AJAX call and call the render function
+      function renderFizzBuzz() {
+
+      var values;
+      //AJAX call
+      $.ajax({
+          url:'/json.json',
+          //If success
+          success : function (result) {
+            values = result.values;
+            generateHTML(values);
+          },
+          //If error
+          error : function (error) {
+            console.log('THERE WAS AN ERROR IN THE AJAX CALL')
+            console.log(error);
+          }
+        });
+
+      }
+      //--
+
+      //--Render the HTML
+      function generateHTML(values) {
         var node;
         var textnode;
         values.forEach(function(ele) {
