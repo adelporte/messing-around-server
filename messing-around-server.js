@@ -52,7 +52,7 @@ if (request.url === '/json.json') {
         values
       });
 
-     response.write(values, function(err) { response.end(); });
+     response.write(values, function() { response.end(); });
       
       
   });  
