@@ -1,27 +1,6 @@
 var http = require("http");
 
 var server = http.createServer(function(request, response) {
-  
-  /*--The FizzBuzz logic
-      function generateFizzBuzz() {
-        var values = [];
-        for (var i = 1; i <= 100; i++) {
-          if (i % 3 === 0 && i % 5 === 0) {
-            values.push("FizzBuzz");
-          } else if (i % 3 === 0) {
-            values.push("Fizz"); 
-          } else if (i % 5 === 0) {
-            values.push("Buzz");  
-          } else {
-            values.push(i);
-          }
-        }
-        return values;
-      }
-
-      var values = generateFizzBuzz();
-      //var valuesJSON = JSON.stringify(values);
-      */
 
 if (request.url === '/json.json') {
 
@@ -66,67 +45,45 @@ if (request.url === '/json.json') {
      
      var limitValue = res;
      var values = generateFizzBuzz(limitValue);
-     console.log(values, 'in getbody')
 
      response.writeHead(200, {"Content-Type": "application/json"});
 
      values = JSON.stringify({ 
         values
       });
-      console.log(values, 'when stringified')
 
-      response.end(values);
+     response.write(values, function(err) { response.end(); });
+      
       
   });  
-  
+
 } else if (request.url === '/script.js') {
     response.writeHead(200, {"Content-Type": "application/javascript"});
     //response.write("values = " + valuesJSON);
     response.write(`
       var ele = document.getElementById("button");     
-      ele.addEventListener("click", clickEventHandler, false);
+      ele.addEventListener("click", getTheInput, false);
 
-      //--The doer function
-      function clickEventHandler() {
-        getTheInput();
-      }
-      //--
+      var values;
 
+      //--AJAX call
       function getTheInput() {
-        var userInput = $('input').val();
+        var userInput = $('input').val() || 100;
 
         $.ajax({
                 type: 'POST',
                 data: JSON.stringify(userInput),
                 url: '/json.json',                      
-                success: renderFizzBuzz(),
+                success: function(result) {
+                  values = result.values;
+                  generateHTML(values);
+                },
                 error: function(error) {
                     console.log("some error in fetching the notifications");
                     console.log(error);
                 }
 
             });
-      }
-
-      //--Make the AJAX call and call the render function
-      function renderFizzBuzz() {
-
-      var values;
-      //AJAX call
-      $.ajax({
-          url:'/json.json',
-          //If success
-          success : function (result) {
-            values = result.values;
-            generateHTML(values);
-          },
-          //If error
-          error : function (error) {
-            console.log('THERE WAS AN ERROR IN THE AJAX CALL')
-            console.log(error);
-          }
-        });
-
       }
       //--
 
@@ -143,7 +100,7 @@ if (request.url === '/json.json') {
       }
       //--
   `);
-
+    response.end();
   } else if (request.url === '/') {
   response.writeHead(200, {"Content-Type": "text/html"});
   response.write(`<!DOCTYPE 'html'>
@@ -164,6 +121,7 @@ if (request.url === '/json.json') {
         <script type="text/javascript" src="script.js"></script>
       </body>
     </html>`);
+    response.end();
   } else {
     response.writeHead(404, {"Content-Type": "text/html"});
     response.write(`<!DOCTYPE 'html'>
@@ -176,8 +134,9 @@ if (request.url === '/json.json') {
         <script type="text/javascript" src="script.js"></script>
       </body>
     </html>`);
+    response.end();
   }
-  response.end();
+
 });
 
 
